@@ -4,6 +4,8 @@ Agent skill for **migrating forms between React Hook Form and TanStack Form** (b
 
 Installable via [skills.sh](https://www.skills.sh/) / [`npx skills`](https://github.com/vercel-labs/skills).
 
+[![skills.sh](https://skills.sh/b/SimaAlexandru99/rhf-tanstack-form-skill)](https://skills.sh/SimaAlexandru99/rhf-tanstack-form-skill)
+
 ## Install
 
 ```bash
@@ -25,12 +27,26 @@ This is a **migration/procedure** skill, not a greenfield form builder. Use it w
 ```
 skills/rhf-tanstack-form-migration/
 ├── SKILL.md
+├── scripts/
+│   └── inventory.sh          # grep-based RHF/TSF inventory
 └── references/
     ├── api-mapping.md
     ├── side-by-side-examples.md
     ├── pitfalls.md
     └── checklists.md
 ```
+
+## Inventory a codebase
+
+After install (or from this repo):
+
+```bash
+bash skills/rhf-tanstack-form-migration/scripts/inventory.sh /path/to/project
+# installed skill path example:
+bash ~/.claude/skills/rhf-tanstack-form-migration/scripts/inventory.sh .
+```
+
+Prints package deps, import files, pattern hit counts, and a suggested migration direction.
 
 ## Local development
 
@@ -40,6 +56,9 @@ npx skills add . --list
 
 # install into current project
 npx skills add . --skill rhf-tanstack-form-migration -y
+
+# validate
+npx --yes skills-ref validate ./skills/rhf-tanstack-form-migration
 ```
 
 ## License

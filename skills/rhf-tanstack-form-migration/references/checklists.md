@@ -15,6 +15,14 @@ Use these as agent/execution checklists. Tick every item that applies to the cod
 
 ### Inventory greps
 
+Prefer the bundled script (from skill root):
+
+```bash
+bash scripts/inventory.sh /path/to/project
+```
+
+Or manual greps:
+
 ```bash
 # RHF
 rg -n "from ['\"]react-hook-form['\"]|useForm\(|useFieldArray|Controller|FormProvider|useFormContext|useWatch|useController" --glob '*.{ts,tsx,js,jsx}'

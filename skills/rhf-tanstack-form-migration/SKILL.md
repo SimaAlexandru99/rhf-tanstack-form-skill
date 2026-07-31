@@ -127,6 +127,14 @@ Follow in order. Detailed ticks: [references/checklists.md](references/checklist
 
 ### 1. Inventory
 
+Prefer the bundled script (counts + suggested direction):
+
+```bash
+bash scripts/inventory.sh /path/to/project
+```
+
+Or grep:
+
 ```bash
 rg -n "from ['\"]react-hook-form['\"]|useFieldArray|Controller|FormProvider" --glob '*.{ts,tsx}'
 ```
@@ -248,7 +256,7 @@ Full list: [references/pitfalls.md](references/pitfalls.md)
 When asked to migrate forms:
 
 1. **Confirm direction** (RHF→TSF or TSF→RHF) and whether migration is justified  
-2. **Inventory** usages (grep above) and list forms by complexity  
+2. **Inventory** with [scripts/inventory.sh](scripts/inventory.sh) (or greps above); list forms by complexity  
 3. **Load** [references/api-mapping.md](references/api-mapping.md) for the APIs you will touch  
 4. **Migrate one form end-to-end** as a template (prefer a medium-complexity form)  
 5. **Extract shared field components** if more forms remain  
