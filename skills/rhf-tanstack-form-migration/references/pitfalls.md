@@ -113,6 +113,58 @@ TSF inference and dirty/meta flags rely on complete defaults. Missing keys → w
 
 Type-level API changes can ship as patches. Prefer exact versions (`bun add --exact @tanstack/react-form`) for stable agent/code output.
 
+### 16. shadcn Form / `control` field kits (Dialyx-class codebases)
+
+`Form` is often `FormProvider`. Shared fields take `control: Control<T>` and render `Controller` internally. **TSF has no `control` object.**
+
+Naive skill application fails here:
+
+```tsx
+// Still RHF-shaped after "migration" — will not compile with TSF useForm
+<CustomFormField control={form.control} name="email" />
+```
+
+Required: rewrite field components or stop reusing them until a TSF AppField kit exists.
+
+### 17. Enum defaultValues narrow inference
+
+```tsx
+// BAD — TSF infers role as literal "viewer" only → setFieldValue / Select breaks
+defaultValues: { role: "viewer" satisfies Role }
+
+// GOOD
+const defaultValues: FormValues = { role: "viewer", email: "" }
+useForm({ defaultValues, validators: { onSubmit: schema } })
+```
+
+### 18. Show submit-time schema errors
+
+Form-level `validators.onSubmit: zodSchema` populates field errors, but fields may still be untouched. Display:
+
+```tsx
+const show =
+  field.state.meta.errors.length > 0 &&
+  (field.state.meta.isTouched || form.state.submissionAttempts > 0)
+```
+
+(or Subscribe to `submissionAttempts`).
+
+### 19. RHF `values` prop (external sync)
+
+```tsx
+// RHF
+useForm({ defaultValues, values: formValuesFromServer })
+
+// TSF — reset when source changes
+useEffect(() => {
+  form.reset(formValuesFromServer)
+}, [formValuesFromServer])
+```
+
+### 20. Zod adapter myths
+
+Current `@tanstack/react-form` accepts **Standard Schema** (Zod 3.24+ / Zod 4) **directly** in `validators`. Prefer that over outdated `@tanstack/zod-form-adapter` / `validatorAdapter` examples still floating in older agent skills.
+
 ---
 
 ## TSF → React Hook Form

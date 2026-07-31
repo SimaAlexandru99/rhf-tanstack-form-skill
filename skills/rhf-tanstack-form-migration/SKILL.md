@@ -233,8 +233,35 @@ Shorter reverse path (same inventory discipline).
 8. **Verbose Field JSX** — introduce composition early  
 9. **Pin TSF exactly** for stable types  
 10. **Do not half-remove resolvers** — clean package.json after full cutover  
+11. **shadcn `Form` + `control={form.control}` fields** — not portable; rewrite field helpers or build a TSF `AppField` kit first (common in RHF apps)  
+12. **Enum / literal defaultValues** — `role: "viewer"` alone can narrow TSF inference to `"viewer"` only; type `defaultValues` as the full form type  
+13. **Error display** — `isTouched && errors` hides form-level `onSubmit` schema failures; use `isTouched || submissionAttempts > 0`  
+14. **RHF `values` prop** — no 1:1 in TSF; `form.reset(next)` / `setFieldValue` when server props change  
 
 Full list: [references/pitfalls.md](references/pitfalls.md)
+
+## shadcn / design-system form layer (real codebases)
+
+Most production RHF apps do **not** use bare `register`. They look like Dialyx:
+
+```tsx
+// RHF + shadcn pattern (NOT drop-in to TSF)
+const form = useForm({ resolver: zodResolver(schema), defaultValues })
+<Form {...form}>
+  <CustomFormField control={form.control} name="email" />
+</Form>
+```
+
+Migration cost is dominated by this layer:
+
+| Layer | Action |
+|-------|--------|
+| `components/ui/form.tsx` (`FormProvider`/`Controller`) | Keep for remaining RHF forms, or dual-run |
+| `CustomFormField` (`control` prop) | Cannot pass TSF form; rewrite consumers to `form.Field` **or** build TSF-aware field components |
+| One dialog using CustomFormField | Inline `form.Field` + shared `Input`/`Select` (acceptable pilot) |
+| Many dialogs | **Stop** — invent `createFormHook` + AppField kit before mass rewrite |
+
+Skill accuracy note: mapping tables are high-precision for raw RHF APIs. Precision drops if the agent only swaps `useForm` import and leaves `control={...}` helpers unchanged.
 
 ---
 
