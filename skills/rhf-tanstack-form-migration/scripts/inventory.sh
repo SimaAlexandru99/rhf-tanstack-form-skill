@@ -89,18 +89,6 @@ else
 fi
 echo
 
-count_pattern() {
-  # Count matching lines without loading huge output into memory twice.
-  local pattern="$1"
-  if command -v rg >/dev/null 2>&1; then
-    rg -n --glob '*.{ts,tsx,js,jsx}' --glob '!node_modules/**' --glob '!.next/**' \
-      --glob '!dist/**' --glob '!build/**' -c "$pattern" "$ROOT" 2>/dev/null \
-      | awk -F: '{s+=$NF} END {print s+0}'
-  else
-    search "$pattern" | count_lines "$(cat)"
-  fi
-}
-
 # Portable total line count for a pattern
 total_hits() {
   local pattern="$1"
@@ -110,13 +98,14 @@ total_hits() {
 }
 
 echo "--- RHF pattern hits ---"
+# Note: useForm[<(\s] matches useForm(, useForm<T>(, useForm (
 for label_pat in \
-  "useForm\\(" \
-  "useFieldArray" \
-  "Controller|useController" \
-  "FormProvider|useFormContext" \
-  "useWatch|useFormState" \
-  "zodResolver|@hookform/resolvers"
+  'useForm[<(\s]' \
+  'useFieldArray' \
+  'Controller|useController' \
+  'FormProvider|useFormContext' \
+  'useWatch|useFormState' \
+  'zodResolver|@hookform/resolvers'
 do
   n=$(total_hits "$label_pat")
   printf "  %-32s %s\n" "$label_pat:" "$n"
@@ -125,12 +114,12 @@ echo
 
 echo "--- TanStack Form pattern hits ---"
 for label_pat in \
-  "createFormHook|createFormHookContexts" \
-  "form\\.Field|AppField" \
-  "mode=[\"']array[\"']" \
-  "pushValue|removeValue|insertValue" \
-  "form\\.Subscribe|useSelector" \
-  "withForm|withFieldGroup"
+  'createFormHook|createFormHookContexts' \
+  'form\.Field|AppField' \
+  'mode=["'\'']array["'\'']' \
+  'pushValue|removeValue|insertValue' \
+  'form\.Subscribe|useSelector' \
+  'withForm|withFieldGroup'
 do
   n=$(total_hits "$label_pat")
   printf "  %-40s %s\n" "$label_pat:" "$n"
